@@ -10,18 +10,18 @@
       "id": 2,
       "name": "Phone",
       "price": 5000,
-      "checked": true
+      "checked": false
     },
     {
       "id": 3,
       "name": "Tablet",
-      "price": 4000,
+      "price": "500",
       "checked": true
     },
     {
-      "name": "TV",
-      "price": 4000,
-      "checked": true,
+      "name": "Ipad",
+      "price": 8000,
+      "checked": false,
       "id": 4
     }
   ]
