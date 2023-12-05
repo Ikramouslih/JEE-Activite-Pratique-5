@@ -15,8 +15,16 @@ export class ProductService {
       {observe: 'response'});
   }
 
+  public getProductById(id: number) : Observable<Product> {
+    return this.http.get<Product>(`http://localhost:8088/products/${id}`);
+  }
+
+  public saveProduct(product: Product) : Observable<Product> {
+    return this.http.post<Product>('http://localhost:8088/products', product);
+  }
+
   public checkProduct(product: Product) : Observable<Product> {
-    return this.http.patch<Product>(`http://localhost:8088/products/${product.id}`,
+    return this.http.patch<any>(`http://localhost:8088/products/${product.id}`,
       {checked: !product.checked});
   }
 
@@ -24,15 +32,8 @@ export class ProductService {
     return this.http.delete<any>(`http://localhost:8088/products/${id}`);
   }
 
-  public saveProduct(product: Product) : Observable<Product> {
-    return this.http.post<Product>('http://localhost:8088/products', product);
-  }
-
   public updateProduct(product: Product) : Observable<Product> {
     return this.http.put<Product>(`http://localhost:8088/products/${product.id}`, product);
   }
 
-  public getProductById(id: number) : Observable<Product> {
-    return this.http.get<Product>(`http://localhost:8088/products/${id}`);
-  }
 }

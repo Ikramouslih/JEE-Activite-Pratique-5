@@ -18,7 +18,7 @@ export class NewProductComponent implements OnInit{
   ngOnInit(): void {
     this.productForm = this.fb.group({
       name: this.fb.control('', [Validators.required]),
-      price: this.fb.control(0),
+      price: this.fb.control(0,[Validators.min(100)]),
       checked: this.fb.control(false)
     })
   }
@@ -29,7 +29,7 @@ export class NewProductComponent implements OnInit{
       next: (data) => {
         alert(JSON.stringify(data));
         this.productForm.reset();
-        this.router.navigate(['/products']);
+        this.router.navigate(['/admin/products']);
       },
       error: (err) => {
         console.log(err)

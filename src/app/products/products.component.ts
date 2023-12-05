@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ProductService} from "../services/product.service";
 import {Product} from "../models/product.model";
 import {Router} from "@angular/router";
+import {AppStateService} from "../services/app-state.service";
 
 @Component({
   selector: 'app-products',
@@ -11,25 +12,24 @@ import {Router} from "@angular/router";
 
 export class ProductsComponent implements OnInit{
 
-  products! : Array<Product>;
-  keyword: any = '';
-  totalPages: number=0;
-  pageSize: number=3;
-  currentPage: number=1;
-
-  constructor(private productsService: ProductService, private router:Router) {}
+  constructor(private productsService: ProductService, private router:Router, public appState : AppStateService) {}
 
   ngOnInit(): void {
     this.searchProducts();
   }
 
-    searchProducts() {
-      this.productsService.getProducts(this.keyword,this.currentPage, this.pageSize).subscribe({
-        next: (resp) => {
-          this.products = resp.body as Array<Product>;
-          let totalProducts = parseInt(resp.headers.get('X-Total-Count')!);
-          this.totalPages = Math.ceil(totalProducts / this.pageSize);
-      },
+  searchProducts() {
+    this.productsService.getProducts(this.appState.productsState.keyword, this.appState.productsState.currentPage, this.appState.productsState.pageSize).subscribe({
+      next: (resp) => {
+        let products = resp.body as Array<Product>;
+        let totalProducts = parseInt(resp.headers.get('X-Total-Count')!);
+        let totalPages = Math.ceil(totalProducts / this.appState.productsState.pageSize);
+        this.appState.setProductState({
+          products : products,
+          totalProducts : totalProducts,
+          totalPages : totalPages,
+          status :"LOADED"
+        })      },
       error: (err) => {
         console.log(err)
       }
@@ -51,7 +51,7 @@ export class ProductsComponent implements OnInit{
     if (confirm('Are you sure?')) {
       this.productsService.deleteProduct(product.id).subscribe({
         next: () => {
-          this.products = this.products.filter(p => p.id !== product.id)
+          this.searchProducts();
         },
         error: (err) => {
           console.log(err)
@@ -61,12 +61,12 @@ export class ProductsComponent implements OnInit{
   }
 
   handleGoToPage(page: number) {
-    this.currentPage = page;
+    this.appState.productsState.currentPage = page;
     this.searchProducts();
   }
 
   handleEditProduct(product: Product) {
-    this.router.navigate(['/editProduct', product.id])
+    this.router.navigate(['/admin/editProduct', product.id])
   }
 
 }
